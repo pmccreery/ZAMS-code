@@ -5,6 +5,7 @@ This repository houses a very basic ZAMS stellar structure model for graduate le
 Quick outline of the repository:
 
 Report/ - contains files to compile the report on this project
+
 opacities/ - contains the files used to create the stitched opacity table
 
 calculations.py - calculations of various sorts (energy generation, derivatives, etc.)
