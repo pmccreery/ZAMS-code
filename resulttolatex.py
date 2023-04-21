@@ -1,12 +1,28 @@
 from calculations import *
 
+"""
+This script takes the results of the converged solution and turns them into a latex table
+"""
+
 
 def round_to_sf(x, sf):
+    """
+    Rounds to significant digits
+    :param x: (float) number to round
+    :param sf: (int) number of significant digits required
+    :return: number rounded to sf significant digits
+    """
     return round(x, -int(np.floor(np.log10(abs(x)))) + (sf - 1))
 
 
 def resulttolatex(y_o, y_i, df_return=False):
-    ' df_return = True means the df is returned, df_return = False means latex is prnted'
+    """
+
+    :param y_o: solve_ivp output for outward integration
+    :param y_i: solve_ivp output for inward integration
+    :param df_return: (boolean) if the dataframe should be returned (True) or the plain text for the latex table (False)
+    :return: dataframe with values (if df_return == True)
+    """
 
     x_tot = np.hstack((y_o.t, np.flipud(y_i.t)))
     r_tot = np.hstack((y_o.y[2], np.flipud(y_i.y[2])))
@@ -60,7 +76,7 @@ def resulttolatex(y_o, y_i, df_return=False):
             df[col] = np.round(df[col] * rounding_factor) / rounding_factor
         return df
 
-    # Round data frame to 3 significant digits
+    # Round data frame to 6 significant digits
     df = round_to_significant_digits(df, 6)
     df['Transport'] = strdf
 
