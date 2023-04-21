@@ -4,23 +4,55 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 def density(P, T):
+    """
+    Calculates the density for a given pressure and temperature. Assumes pure gas and radiation pressure
+    :param P: (float) pressure value
+    :param T: (float) temperature value
+    :return: (float) density
+    """
     return (P - ((1 / 3) * a * T ** 4)) * (mu * mp) / (k * T)
 
 
 def opacity_pressure(rho, T, g):
+    """
+    Calculates the pressure based on opacity value
+    :param rho: (float) density value
+    :param T: (float) temperature value
+    :param g: (float) gravity value
+    :return: (float) pressure value
+    """
     return (2 / 3) * g / opacityValue(log_R, log_T, totTable, rho, T)
 
 
 def gas_and_rad_pressure(rho, T):
+    """
+    Calculates the pressure based on gas and radiation pressure
+    :param rho: (float) density value
+    :param T: (float) temperature value
+    :return: (float) pressure value
+    """
     return (1 / 3) * a * T ** 4 + rho * Na * k * T / mu
 
 
 def rho_solver(rho, T, g):
+    """
+    Calculates the fractional difference between opacity pressure and gas+radiation pressure
+    :param rho: (float) density value
+    :param T: (float) temperature value
+    :param g: (float) gravity value
+    :return: (float) fractional difference between opacity pressure and gas+radiation pressure
+    """
     diff = 1 - (opacity_pressure(rho, T, g) / gas_and_rad_pressure(rho, T))
     return diff
 
 
 def f11(rho, T):
+    """
+    Calculates the weak screening factor f_11
+    :param rho: (float) density value
+    :param T: (float) temperature value
+    :return: (float) weak screening factor
+    """
     T7 = T / 1e7
     if T7 < 1:
         psi = 1
@@ -32,6 +64,12 @@ def f11(rho, T):
 
 
 def energy(rho, T):
+    """
+    Calculates the energy generation rate from the proton-proton chain and the CNO cycle
+    :param rho: (float) density value
+    :param T: (float) temperature value
+    :return: (float) energy generation rate
+    """
     T9 = T / 1e9
     g11 = 1 + (3.82 * T9) + (1.51 * T9 ** 2) + (.144 * T9 ** 3) - (.0114 * T9 ** 4)
     epp = 2.57e4 * f11(rho, T) * g11 * rho * (X ** 2) * (T9 ** (-2 / 3)) * np.exp(-3.381 / T9 ** (1 / 3))
@@ -41,10 +79,25 @@ def energy(rho, T):
 
 
 def delrad(P, T, L, kappa, M):
+    """
+    Calculates the temperature gradient in radiative zones
+    :param P: (float) pressure value
+    :param T: (float) temperature value
+    :param L: (float) luminosity value
+    :param kappa: (float) opacity value
+    :param M: (float) interior mass value
+    :return: (float) temperature gradient
+    """
     return (3 / (16 * np.pi * a * c)) * (P * kappa / (T ** 4)) * (L / (G * M))
 
 
 def load1(Pc, Tc):
+    """
+    Loads the core's initial values for the IVP
+    :param Pc: (float) pressure value at the core
+    :param Tc: (float) temperature value at the core
+    :return: (array) boundary values near the core for L, P, r, and T
+    """
     rhoc = density(Pc, Tc)
     ec = energy(rhoc, Tc)
     kappac = opacityValue(log_R, log_T, totTable, rhoc, Tc)
@@ -70,6 +123,12 @@ def load1(Pc, Tc):
 
 
 def load2(Ls, Rs):
+    """
+    Loads the surface's initial values for the IVP
+    :param Ls: (float) surface luminosity value
+    :param Rs: (float) stellar radius value
+    :return: (array) boundary values near the surface for L, P, r, and T
+    """
     gs = G * M_star / (Rs ** 2)
     Ts = np.power(Ls / (4 * np.pi * sb * Rs ** 2), 1 / 4)
     rhos = brentq(rho_solver, 10 ** -12, 10 ** -6, args=(Ts, gs))
@@ -80,6 +139,12 @@ def load2(Ls, Rs):
 
 
 def derivs(x, y):
+    """
+    Calculates the stellar structure equations' derivatives
+    :param x: mass coordinate to calculate derivatives at
+    :param y: array of parameter values for [L, P, r, T]
+    :return: (array) contains the derivative values at mass point x
+    """
     rho = density(y[1], y[3])
     kappa = opacityValue(log_R, log_T, totTable, rho, y[3])
     del_rad = (3 / (16 * np.pi * a * c)) * (y[1] * kappa / (y[3] ** 4)) * (y[0] / (G * x))
@@ -95,6 +160,13 @@ def derivs(x, y):
 
 
 def plotting(y_o, y_i, save=False):
+    """
+    Plotting the results of the shooting method.
+    :param y_o: solve_ivp result for outward integration
+    :param y_i: solve_ivp result for inward integration
+    :param save: boolean value for if the plot should be saved or not
+    :return:
+    """
     plt.figure(figsize=(7, 7))
 
     plt.plot(y_o.t / M_star, y_o.y[0] / np.max(y_i.y[0]), c='#009E73', linestyle='-', lw=3,

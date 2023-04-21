@@ -1,3 +1,6 @@
+"""
+Constants courtesy of Kevin Schlaufman
+"""
 c = 2.99792458e10;
 h = 6.6260755e-27;
 G = 6.67259e-8;

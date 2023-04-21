@@ -1,7 +1,11 @@
 from tableInterpolation import *
 from constants import *
 
-M_factor = 2.0
+"""This script initializes our star, defining its mass, the guesses, and other stellar properties. This also defines 
+the MESA parameters that we're comparing our model against (must run MESA first). 
+"""
+
+M_factor = 2.0 # 2 solar mass star
 
 # USE ZAMS SOLAR ESTIMATE
 M_sun = 1.989e+33
