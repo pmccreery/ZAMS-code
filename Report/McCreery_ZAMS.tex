@@ -27,23 +27,36 @@ Baltimore, MD 21218, USA}
 
 \begin{abstract}
 
-In this project, we present a simple Zero-Age Main Sequence (ZAMS) stellar model based on fundamental physical principles, utilizing the stellar structure equations to capture the essential physics of ZAMS stars while avoiding unnecessary complexities. We compare our model to Modules for Experiments in Stellar Astrophysics's (MESA's) predictions, demonstrating our model's accuracy in reproducing key stellar properties. This project highlights the key aspects of more accurate stellar models, as well as the improvements and shortfalls of this simple model. 
+In this project, we present a simple Zero-Age Main Sequence (ZAMS) stellar model based on fundamental physical principles, utilizing the stellar structure equations to capture the essential physics of ZAMS stars while avoiding unnecessary complexities. We compare our model to Modules for Experiments in Stellar Astrophysics's (MESA's) predictions, demonstrating our model's accuracy in reproducing key stellar properties. This project highlights the key aspects of more accurate stellar models, as well as the improvements and shortfalls of simple models.
+
 \end{abstract}
 
 
 \section{Introduction} \label{sec:intro}
 
-Understanding the structure and behavior of stars is a fundamental topic in astrophysics, with implications ranging from the evolution of the Universe, and all of the matter within it, to the search for habitable exoplanets. Due to the difficulties in studying stellar interiors (distances, temperatures, opacities, etc.), the use of mathematical models that describe their internal structure and physical properties are critical to creating an understanding of these interiors. At the most basic level, these models use the stellar structure equations, providing a mathematical framework for describing the equilibrium and energy transport mechanisms within stars. 
+Understanding the structure and behavior of stars is a fundamental topic in astrophysics, with implications ranging from the evolution of the Universe, and all of the matter within it, to the search for habitable exoplanets. Due to the difficulties in studying stellar interiors (distances, opacities, etc.), the use of mathematical models that describe their internal structure and physical properties are critical to creating an understanding of these interiors. At the most basic level, these models use the stellar structure equations, providing a mathematical framework for describing the equilibrium and energy transport mechanisms within stars. 
 
-In this project, we focus on the process of creating a ZAMS stellar model using the stellar structure equations. A ZAMS star is an early stage of a star's evolution when it has just begun its main sequence phase, characterized by the primary energy generation source being nuclear fusion (compared to gravitational contraction). Studying ZAMS stars provides insights into the initial properties and evolution of stars, serving as a reference point for understanding the physical processes that govern stellar evolution.
+In this project, we focus on the process of creating a ZAMS stellar model using the stellar structure equations. A ZAMS star is an early stage of a star's evolution when it has just begun its main sequence phase, characterized by the primary energy generation source being nuclear fusion (compared to gravitational contraction, for example). Studying ZAMS stars provides insights into the initial properties and evolution of stars, serving as a reference point for understanding the physical processes that govern stellar evolution.
 
-We will provide an overview of the key equations involved and the physical principles they represent. We will also discuss the primary numerical method used for solving this coupled system of equations -- the shooting method. Additionally, we will explore the challenges and limitations of our specific stellar model, such as the uncertainties in input physics, boundary conditions, and other assumptions.
+We will provide an overview of the key equations involved and the physical principles they represent. We will also discuss the primary numerical method used for solving this coupled system of equations -- the shooting method. At the end of this report, we compare specific properties to MESA's predictions and provide a table of interior structure. Additionally, we will explore the challenges and limitations of our specific stellar model, such as the uncertainties in input physics, boundary conditions, and other assumptions.
 
 \section{Methods} \label{sec:method}
 
-The stellar structure equations are a set of mathematical equations that describe the physical properties of stars, including their temperature, pressure, density, and energy production mechanisms. These four nonlinear, coupled differential equations are based on hydrostatic equilibrium, conservation laws, and energy transport through radiation and convection. By solving these equations, we can create  models that simulate the behavior of stars under different conditions, such as different masses and compositions.
+The stellar structure equations are a set of mathematical equations that describe the physical properties of stars, including their temperature, pressure, density, and energy production mechanisms. These four nonlinear, coupled differential equations are based on hydrostatic equilibrium, conservation laws, and energy transport through radiation and convection. By solving these equations, we can create models that demonstrate the behavior of stars for different cases, such as different masses and compositions.
 
-We begin with a discussion of the fundamental equations we use:
+\subsection{Assumptions}
+
+Before getting into the mathematical methods, we begin by outlining the assumptions we make in our model:
+
+\begin{itemize}
+	\item Only fusion energy sources -- ignore other energy sources
+	\item Ideal gas law applies everywhere
+	\item Only gas and radiation pressure are present
+	\item No rotation
+	\item Full ionization of the star
+\end{itemize}
+
+Now we have a discussion of the fundamental equations we use:
 
 \subsection{Stellar Structure Equations}
 
@@ -73,25 +86,11 @@ We define an equation of state that includes both ideal gas pressure and radiati
 
 $k$ and $a$ are constants, while $\mu$ is dependent on the mass fraction of hydrogen $X$: $\mu = \frac{4}{3 + 5X}$. Equation \ref{eqn:eos} can be solved for the density as a function of pressure, temperature, and composition, which aids in the calculation of these derivatives. 
 
-\subsection{Assumptions}
-
-Before going further, we address some of the most important assumptions we make:
-\begin{itemize}
-	\item Only fusion energy sources -- ignore other energy sources
-	\item Ideal gas law applies everywhere
-	\item Only gas and radiation pressure are present
-	\item No rotation
-	\item Full ionization of the star
-\end{itemize}
-
-
-
-Now, there are a plethora of ways to solve these differential equations with these given assumption, but to begin, we explain the assumptions we use, then explain numerically solving these equations in Section 3. 
-
+The total energy generation rate, $\varepsilon$, can be defined in a variety of ways, so we now discuss our treatment of the variable.
 
 \subsection{Energy Generation}
 
-Stars, by definition, fuse elements in their cores, which generates energy that is liberated at the stellar surface. For the purposes of this project, we assume that fusion is the dominant process and is the primary source of energy generation in a star that has just reached the ZAMS. Gravitational contraction is a significant energy source and will cause discrepancies between our simple model and more complex models like MESA's. We wouldn't expect a ZAMS star to have significant energy loss due to neutrino loss, and we thus ignore it. The pp-chains and the CNO cycle are the primary fusion reactions we will implement in this model \citep{stelstrucev}. 
+Stars, by definition, fuse elements in their cores, which generates energy that is eventually liberated at the stellar surface. For the purposes of this project, we assume that fusion is the dominant process and is the primary source of energy generation in a star that has just reached the ZAMS. Gravitational contraction is a significant energy source and will cause discrepancies between our simple model and more complex models like MESA's. We wouldn't expect a ZAMS star to have significant energy loss due to neutrino loss, and we thus ignore it. The pp-chains and the CNO cycle are the primary fusion reactions we will implement in this model \citep{stelstrucev}. 
 
 \begin{equation}
 	\frac{d\mathcal{L}}{d\mathcal{M}_r} = \varepsilon = \varepsilon_{pp} + \varepsilon_{CNO}
@@ -146,7 +145,7 @@ For our purposes, we use some linear relation from a value of 1 for $T_7 < 1$ an
 \end{split}
 \end{equation}
 
-$X_{CNO} = X_C + X_N + X_O \approx .71 Z$ using approximately solar composition of C, N, O, and metals ($Z$). (REFERENCE OPAL).
+$X_{CNO} = X_C + X_N + X_O \approx .71 Z$ using approximately solar composition of C, N, O, and metals ($Z$) \citep{opal}.
 
 \begin{equation}
     \label{g14,1}
@@ -157,7 +156,7 @@ $X_{CNO} = X_C + X_N + X_O \approx .71 Z$ using approximately solar composition 
 
 After energy generation, we focus on the transport of energy, $\frac{d T}{d\mathcal{M}_r}$. The factor $\nabla$ is an important piece of the model to get correctly, as this separates radiative from convective energy transport -- two very different processes that impact stellar structure of a star.
 
-When we calculate the two values $\nabla_{ad}$ and $\nabla_{rad}$, we assign $\nabla$ to be the smaller of the two values, meaning the more efficient energy transport mechanism in a specific portion of a star. 
+When we calculate the two values $\nabla_{ad}$ and $\nabla_{rad}$, we assign $\nabla$ to be the smaller of the two values, meaning the more efficient energy transport mechanism in a specific portion of the star. 
 
 \subsubsection{Radiative Energy Transport}
 
@@ -207,7 +206,7 @@ Given the assumptions/nuances above, we can make a general estimate of the type 
 
 We also make assumptions of solar composition C, N, and O, as well as values of X=0.70, Y=0.28, and Z=0.02, which are consistent with the present day sun. 
 
-Now that we have a working understanding of the differential equations we must solve and the details of each, we can now proceed to actually solving these equations with the given conditions  explained above.
+Now that we have a working understanding of the differential equations we must solve and the details of each, we can now proceed to actually solving these equations with the given conditions explained above.
 
 
 \section{Numerical Methods}
@@ -222,7 +221,7 @@ The shooting method is a robust numerical technique that is widely used to solve
 
 For our purposes, we will define boundary values at the surface and the core, numerically integrate inwards from the surface, outwards from the core, then iteratively change the boundary conditions individually until the two integrations meet somewhere in the middle of the interval. 
 
-We can define a vector function for this:
+We can define a vector function for the differences at the meeting point:
 
 \begin{equation}
 	\label{eqn:diff}
@@ -238,7 +237,7 @@ This begs the question of what this intermediate point is and where is will be p
 
 Preemptively, for the following sections, we discuss how we will find opacities for each portion of the star. 
 
-To do this, we take opacities from the Lawrence Livermore National Laboratory's OPAL database \citep{opal}, which provides us opacity values for solar composition stars from log R values of -8 to 1, and log T values from 3.75 to 8.70 \citep{opacities}. We also concatenate opacity values for log T below 3.75 K, just in case they are necessary for surface calculations \citep{asplund}, \citep{lowt}.
+To do this, we take opacities from the Lawrence Livermore National Laboratory's OPAL database \citep{opal}, which provides us opacity values for solar composition stars from log R values of -8 to 1, and log T values from 3.75 to 8.70 \citep{opacities}. We also concatenate opacity values for log T below 3.75, just in case they are necessary for surface calculations where temperatures are low \citep{asplund}, \citep{lowt}.
 
 We took these 2d tables and created an interpolator function that uses density and temperature to return an interpolated opacity value. We use linear interpolation (\texttt{scipy.interpolate.griddate}) for ease, and we have no reason to expect any more complicated interpolation methods to be significantly more accurate.
 
@@ -301,11 +300,11 @@ T_{\mathcal{M}_r=\mathcal{M}} = T_\text{eff} = \left(\frac{\mathcal{L}}{4\pi R^2
 
 \subsubsection{Core Boundary}
 
-In the core, we have issues with singularities at the exact center, where $\mathcal{M}_{r=0} = 0$. It is clear that three of our equations will be indeterminant or non-existent, which is obviously an issue for integration when the initial values do not exist. Thus, we will actually start our integration at some somewhat-arbitrary point away from the star's core, at say $1\times 10^{-8} \mathcal{M}$. 
+In the core, we have issues with singularities at the exact center, where $\mathcal{M}_{r=0} = 0$. It is clear that three of our equations will be indeterminant or non-existent, which is obviously an issue for integration when the initial values do not exist. Thus, we will actually start our integration at a somewhat-arbitrary point away from the star's core, at say $1\times 10^{-8} \mathcal{M}$. 
 
 We must provide guesses for the star's central pressure and temperature and then we must correct for our small perturbation from the core.
 
-We outlined in Section 2.3 the temperature corrections for temperatures close to the core given radiative or convective energy transport. Now, we must do the same for pressure corrections:
+We outlined in Section 2.4 the temperature corrections for temperatures close to the core given radiative or convective energy transport. Now, we must do the same for pressure corrections:
 \begin{equation}
 	P_{\mathcal{M}_r} = P_c - \frac{3G}{8\pi}\left(\frac{4\pi}{3}\rho_c\right)^{4/3}\mathcal{M}_r^{1/3}
 \end{equation}
@@ -405,10 +404,10 @@ Final Diff. Errors & .0097 & .0046 & .0006 & .0012 \\
 
 Our solutions were cut off when the difference between the two integrations at the meeting point was less than 1\% for the parameter with the largest difference. This took 39 integrations.
 
-Paper I from the Mesa Isochrones and Stellar Tracks (MIST) models defines a star reaching the ZAMS when $\mathcal{L}_{nuc}/\mathcal{L} \geq 0.9$ in MESA \citep{mist}. We follow this guideline as well for the values in Table \ref{tab:res}. We use the same stellar mass to run this calculation and used solar composition.
+Paper I from the Mesa Isochrones and Stellar Tracks (MIST) models defines a star reaching the ZAMS when $\mathcal{L}_{nuc}/\mathcal{L} \geq 0.9$ in MESA \citep{mist}. We follow this guideline for the values in Table \ref{tab:res}. We use the same stellar mass to run this calculation and used solar composition.
 
 
-All of the values in Table \ref{tab:res} are within 10\% of the expected MESA values, but there is some difference. This is to be as expected, given the poor physics that we have implemented in our model. As a star enters the main sequence, gravitational contraction plays a significant role, meaning our luminosity values are understandably off. Given the coupling of the temperature, pressure, and energy generation rate, the issue with the physics propagates to other parameters. All things given, however, our converged solution is in agreement with MESA's values.
+All of the values in Table \ref{tab:res} are within 10\% of the expected MESA values, but there is some difference. This is to be as expected, given the poor physics that we have implemented in our model. As a star enters the main sequence, gravitational contraction plays a significant role, meaning our luminosity values are understandably different. Given the coupling of the temperature, pressure, and energy generation rate, the issue with the physics propagates to other parameters. All things given, however, our converged solution is in agreement with MESA's values.
 
 Other mass values were tested above and below 2 solar masses, but the 2 solar mass model seemed to run the most accurate in a small number of iterations.
 
@@ -419,7 +418,7 @@ The star's structure (cumulative energy generation, pressure, radius, and temper
 \begin{figure}[ht!]
 	\plotone{figures/TotalPlot.png}
 	\label{fig:tot}
-	\caption{Diagram showing ZAMS star's interior structure via luminosity, pressure, radius, and temperature. Note that the values are normalized.}
+	\caption{Diagram showing ZAMS star's interior structure via luminosity, pressure, radius, and temperature. Note that the values are normalized. The left color denotes the outward integration region, while the right color denotes the inward integration region.}
 \end{figure}
 
 We normalized the values to their maximum values in an effort to make a more clear plot. We see at the boundary between the inward and outward integration that there is a slight discrepancy in the luminosity especially, which is expected given the fractional differences outlined above. Otherwise, the behavior appears appropriate and consistent with typical ZAMS stellar structure behavior.
